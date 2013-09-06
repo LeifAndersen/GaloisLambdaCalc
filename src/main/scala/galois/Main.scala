@@ -20,16 +20,25 @@ case class HaltExp() extends AExp
 case class Closure(e: Exp, env: Map[VarExp, Address])
 
 sealed trait State
+sealed trait EvalState
+sealed trait ApplyState
+sealed trait HaltState
 
 sealed trait CState
-case class CEvalState(e: Exp, env: Map[VarExp, Address], store: CStore) extends CState
-case class CApplyState(f: CEvalState, x: List[CEvalState], store: AStore) extends CState
-case class CHaltState() extends CState
+case class CEvalState(e: Exp, env: Map[VarExp, Address], store: CStore)
+    extends CState with EvalState
+case class CApplyState(f: CEvalState, x: List[CEvalState], store: AStore)
+    extends CState with ApplyState
+case class CHaltState()
+    extends CState with HaltState
 
 sealed trait AState
-case class AEvalState(e: Exp, env: Map[VarExp, Address], store: AStore) extends AState
-case class AApplyState(f: AEvalState, x: List[AEvalState], store: AStore) extends AState
-case class AHaltState() extends AState
+case class AEvalState(e: Exp, env: Map[VarExp, Address], store: AStore)
+    extends AState with EvalState
+case class AApplyState(f: AEvalState, x: List[AEvalState], store: AStore)
+    extends AState with ApplyState
+case class AHaltState()
+    extends AState with HaltState
 
 case class Address(address: Exp)
 
